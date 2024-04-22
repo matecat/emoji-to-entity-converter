@@ -2,7 +2,7 @@
   "name": "matecat/emoji-parser",
   "type": "library",
   "description": "Matecat Emoji Parser component",
-  "keywords": ["subfiltering", "filter", "php"],
+  "keywords": ["emoji", "filter", "php"],
   "homepage": "https://github.com/matecat/emoji-parser",
   "license": "MIT",
   "support": {
