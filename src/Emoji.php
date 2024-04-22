@@ -7,7 +7,7 @@
  *
  */
 
-namespace Matecat\Emoji;
+namespace Matecat\EmojiParser;
 
 class Emoji {
 
