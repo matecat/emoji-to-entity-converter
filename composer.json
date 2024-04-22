@@ -1,0 +1,37 @@
+{
+  "name": "matecat/emoji-parser",
+  "type": "library",
+  "description": "Matecat Emoji Parser component",
+  "keywords": ["subfiltering", "filter", "php"],
+  "homepage": "https://github.com/matecat/emoji-parser",
+  "license": "MIT",
+  "support": {
+    "issues": "https://github.com/matecat/emoji-parser/issues"
+  },
+  "authors": [
+    {
+      "name": "Mauro Cassani",
+      "email": "maurocassani1978@gmail.com",
+      "homepage": "https://github.com/mauretto78"
+    },
+    {
+      "name": "Domenico Lupinetti",
+      "email": "ostico@gmail.com",
+      "homepage": "https://github.com/ostico"
+    }
+  ],
+  "autoload": {
+    "psr-4": {
+      "Matecat\\EmojiParser\\": "src/"
+    }
+  },
+  "autoload-dev": {
+    "psr-4": { "Matecat\\EmojiParser\\Tests\\": "tests/" }
+  },
+  "require": {
+    "php": ">=5.6"
+  },
+  "require-dev": {
+    "phpunit/phpunit": "^5.7.27"
+  }
+}
