@@ -1,12 +1,12 @@
 {
-  "name": "matecat/emoji-parser",
+  "name": "matecat/emoji-to-entity-converter",
   "type": "library",
-  "description": "Matecat Emoji Parser component",
-  "keywords": ["emoji", "filter", "php"],
-  "homepage": "https://github.com/matecat/emoji-parser",
+  "description": "Matecat Emoji To Entity converter component",
+  "keywords": ["emoji", "xml", "php"],
+  "homepage": "https://github.com/matecat/emoji-to-entity-converter",
   "license": "MIT",
   "support": {
-    "issues": "https://github.com/matecat/emoji-parser/issues"
+    "issues": "https://github.com/matecat/emoji-to-entity-converter/issues"
   },
   "authors": [
     {
