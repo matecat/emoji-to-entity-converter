@@ -1,11 +1,4 @@
 <?php
-/**
- * Created by PhpStorm.
- * @author hashashiyyin domenico@translated.net / ostico@gmail.com
- * Date: 22/04/24
- * Time: 17:22
- *
- */
 
 namespace Matecat\EmojiParser;
 
