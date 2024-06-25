@@ -21,15 +21,17 @@ Emoji::toEmoji("&#129701;");
 
 ## Automatic update the emoji map 😀 
 
-The library comes with a tool to automatically update the emoji map.
+An automated tool is provided by the library to update the emoji map.
 
-Install all the dev dependencies, and then launch this command in your terminal:
+It is based on the [Open Emoji Map](https://emoji-api.com/) project and all credit goes to its author.
+
+First, you need to install all the dev dependencies. Afterwards, obtain your Open Emoji Map API key, copy the contents of `credentials.dist.ini` file into `credentials.ini` and insert the key.
+
+Subsequently, enter the following command in your terminal:
 
 ```cli
 php bin/console emoji:update
 ```
-
-This tool is based on [Open Emoji Map](https://emoji-api.com/) project, all credits to the author.
 
 ## Support
 
