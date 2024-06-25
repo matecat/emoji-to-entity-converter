@@ -19,6 +19,18 @@ Emoji::toEntity("🫧");
 Emoji::toEmoji("&#129701;");
 ```
 
+## Automatic update the emoji map 😀 
+
+The library comes with a tool to automatically update the emoji map.
+
+Install all the dev dependencies, and then launch this command in your terminal:
+
+```cli
+php bin/console emoji:update
+```
+
+This tool is based on [Open Emoji Map](https://emoji-api.com/) project, all credits to the author.
+
 ## Support
 
 If you found an issue or had an idea please refer [to this section](https://github.com/matecat/emoji-to-entity-converter/issues).

@@ -66,27 +66,66 @@ class EmojiUpdateCommand  extends Command
     {
         $htmlEntities = $this->convertEmojiToHtmlEntities($emoji->character);
 
-        $chmapFile =  __DIR__ . '/../../config/chmap.php';
+        $chmapFile =  __DIR__ . '/../chmap.php';
         $chmap = include $chmapFile;
         $inverseChmap = array_flip($chmap);
 
         foreach ($htmlEntities as $character => $htmlEntity){
-            if(!isset($inverseChmap[$htmlEntity])){
-                $outcome = 'UPDATED';
-                $outcomeColor = 'cyan';
-                $updates++;
-                $chmap[$character] = $htmlEntity;
-            } else {
-                $outcome = 'SKIPPED';
-                $outcomeColor = 'red';
-                $skipped++;
+            if(strlen($htmlEntity) >= 8){
+                if(!isset($inverseChmap[$htmlEntity])){
+                    $outcome = 'UPDATED';
+                    $outcomeColor = 'cyan';
+                    $updates++;
+                    $chmap[$character] = $htmlEntity;
+                } else {
+                    $outcome = 'SKIPPED';
+                    $outcomeColor = 'red';
+                    $skipped++;
+                }
+
+                $io->writeln(($i).'. Importing <fg=green>'.$emoji->slug.'</>...........<fg='.$outcomeColor.'>'.$outcome.'</>');
+                $i++;
+
+                file_put_contents($chmapFile, $this->generateTheChmapArray($chmap));
             }
-
-            $io->writeln(($i).'. Importing <fg=green>'.$emoji->slug.'</>...........<fg='.$outcomeColor.'>'.$outcome.'</>');
-            $i++;
-
-            file_put_contents($chmapFile, "<?php ". PHP_EOL. PHP_EOL. "return ". var_export($chmap, true) .";");
         }
+    }
+
+    /**
+     * @param $chmap
+     * @return string
+     */
+    private function generateTheChmapArray($chmap)
+    {
+        $chmapArray  = "<?php ";
+        $chmapArray .= PHP_EOL;
+        $chmapArray .= PHP_EOL;
+        $chmapArray .= "/**";
+        $chmapArray .= PHP_EOL;
+        $chmapArray .= " * Note: for not visible characters:";
+        $chmapArray .= PHP_EOL;
+        $chmapArray .= " *";
+        $chmapArray .= PHP_EOL;
+        $chmapArray .= " * Launch IDE debug, and evaluate the expression:";
+        $chmapArray .= PHP_EOL;
+        $chmapArray .= " *";
+        $chmapArray .= PHP_EOL;
+        $chmapArray .= " * html_entity_decode('xxxx');";
+        $chmapArray .= PHP_EOL;
+        $chmapArray .= " *";
+        $chmapArray .= PHP_EOL;
+        $chmapArray .= " * and then copy the value";
+        $chmapArray .= PHP_EOL;
+        $chmapArray .= " *";
+        $chmapArray .= PHP_EOL;
+        $chmapArray .= " * @var array";
+        $chmapArray .= PHP_EOL;
+        $chmapArray .= " */";
+        $chmapArray .= PHP_EOL;
+        $chmapArray .= "return ". var_export($chmap, true) .";";
+        $chmapArray .= PHP_EOL;
+
+        return $chmapArray;
     }
 
     /**

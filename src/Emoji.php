@@ -4,25 +4,21 @@ namespace Matecat\EmojiParser;
 
 class Emoji {
 
-    /**
-     * Note: for not visible characters:
-     * Launch IDE debug, and evaluate the expression:
-     *
-     * html_entity_decode("xxxx");
-     *
-     * and then copy the value
-     *
-     * @var array
-     */
-    private static $chmap = [];
+    private static $chmap            = [];
     private static $inverse_char_map = [];
 
+    /**
+     * Generate the char map
+     */
     private static function generateMap() {
         if ( empty( self::$chmap ) ) {
-            self::$chmap = include_once __DIR__ .'/../config/chmap.php';
+            self::$chmap = include_once 'chmap.php';
         }
     }
 
+    /**
+     * Generate the inverse char map
+     */
     private static function generateReverseMap() {
         self::generateMap();
 
