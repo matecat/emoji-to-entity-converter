@@ -111,6 +111,7 @@ class EmojiTest extends TestCase {
             '🥹' => '&#129401;',
             '􀀅' => '&#1048581;',
             '􀀅' => '&#1048581;',
+            '𩸽' => '&#171581;',
         ];
 
         foreach ( $dataset as $emoji => $entity ) {
