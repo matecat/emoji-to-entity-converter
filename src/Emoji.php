@@ -28,13 +28,13 @@ class Emoji {
     }
 
     /**
-     * @param $str
+     * @param string $str
      *
      * @return string
      */
-    public static function toEntity( $str ) {
+    public static function toEntity( string $str ): string {
         self::generateMap();
-        $letters = preg_split( '//u', $str, null, PREG_SPLIT_NO_EMPTY );
+        $letters = preg_split( '//u', $str, '', PREG_SPLIT_NO_EMPTY );
 
         foreach ( $letters as $letter ) {
             if ( isset ( self::$chmap[ $letter ] ) ) {
@@ -46,11 +46,11 @@ class Emoji {
     }
 
     /**
-     * @param $str
+     * @param string $str
      *
      * @return string
      */
-    public static function toEmoji( $str ) {
+    public static function toEmoji( string $str ): string {
         self::generateReverseMap();
         preg_match_all( '/&#[0-9a-fA-F]+;/', $str, $emoji_entity_list, PREG_PATTERN_ORDER );
 
