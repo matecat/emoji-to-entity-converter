@@ -34,7 +34,7 @@ class Emoji {
      */
     public static function toEntity( string $str ): string {
         self::generateMap();
-        $letters = preg_split( '//u', $str, '', PREG_SPLIT_NO_EMPTY );
+        $letters = preg_split( '//u', $str, -1, PREG_SPLIT_NO_EMPTY );
 
         foreach ( $letters as $letter ) {
             if ( isset ( self::$chmap[ $letter ] ) ) {
