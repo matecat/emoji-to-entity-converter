@@ -1,62 +1,70 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Matecat\EmojiParser;
 
-class Emoji {
+class Emoji
+{
 
-    private static $chmap            = [];
-    private static $inverse_char_map = [];
+    /** @var array<string, string> */
+    private static array $chmap = [];
+
+    /** @var array<string, string> */
+    private static array $inverse_char_map = [];
 
     /**
      * Generate the char map
      */
-    private static function generateMap() {
-        if ( empty( self::$chmap ) ) {
-            self::$chmap = include_once 'chmap.php';
+    private static function generateMap(): void
+    {
+        if (empty(self::$chmap)) {
+            /** @var array<string, string> $map */
+            $map = include_once __DIR__ . '/chmap.php';
+            self::$chmap = $map;
         }
     }
 
     /**
      * Generate the inverse char map
      */
-    private static function generateReverseMap() {
+    private static function generateReverseMap(): void
+    {
         self::generateMap();
 
-        if ( empty( self::$inverse_char_map ) ) {
-            self::$inverse_char_map = array_flip( self::$chmap );
+        if (empty(self::$inverse_char_map)) {
+            self::$inverse_char_map = array_flip(self::$chmap);
         }
     }
 
-    /**
-     * @param string $str
-     *
-     * @return string
-     */
-    public static function toEntity( string $str ): string {
+    public static function toEntity(string $str): string
+    {
         self::generateMap();
-        $letters = preg_split( '//u', $str, -1, PREG_SPLIT_NO_EMPTY );
+        $letters = preg_split('//u', $str, -1, PREG_SPLIT_NO_EMPTY);
 
-        foreach ( $letters as $letter ) {
-            if ( isset ( self::$chmap[ $letter ] ) ) {
-                $str = str_replace( $letter, self::$chmap[ $letter ], $str );
+        if ($letters === false) {
+            // @codeCoverageIgnoreStart
+            return $str;
+            // @codeCoverageIgnoreEnd
+        }
+
+        foreach ($letters as $letter) {
+            if (isset(self::$chmap[$letter])) {
+                $str = str_replace($letter, self::$chmap[$letter], $str);
             }
         }
 
         return $str;
     }
 
-    /**
-     * @param string $str
-     *
-     * @return string
-     */
-    public static function toEmoji( string $str ): string {
+    public static function toEmoji(string $str): string
+    {
         self::generateReverseMap();
-        preg_match_all( '/&#[0-9a-fA-F]+;/', $str, $emoji_entity_list, PREG_PATTERN_ORDER );
+        preg_match_all('/&#[0-9a-fA-F]+;/', $str, $emoji_entity_list, PREG_PATTERN_ORDER);
 
-        foreach ( $emoji_entity_list[ 0 ] as $emoji_entity ) {
-            if ( array_key_exists( $emoji_entity, self::$inverse_char_map ) ) {
-                $str = str_replace( $emoji_entity, self::$inverse_char_map[ $emoji_entity ], $str );
+        foreach ($emoji_entity_list[0] as $emoji_entity) {
+            if (array_key_exists($emoji_entity, self::$inverse_char_map)) {
+                $str = str_replace($emoji_entity, self::$inverse_char_map[$emoji_entity], $str);
             }
         }
 

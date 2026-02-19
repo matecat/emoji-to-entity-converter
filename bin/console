@@ -1,13 +1,18 @@
 #!/usr/bin/env php
 <?php
 
+declare(strict_types=1);
+
+use Matecat\EmojiParser\Command\EmojiUpdateCommand;
+use Symfony\Component\Console\Application;
+
 set_time_limit(0);
 
 require __DIR__.'/../vendor/autoload.php';
 
-$app = new \Symfony\Component\Console\Application('Matecat Emoji Parser', 'v1.0');
+$app = new Application('Matecat Emoji Parser', 'v1.0');
 
 // add commands here
-$app->add(new \Matecat\EmojiParser\Command\EmojiUpdateCommand());
+$app->addCommand(new EmojiUpdateCommand());
 
 $app->run();

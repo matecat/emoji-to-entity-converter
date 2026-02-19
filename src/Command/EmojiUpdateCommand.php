@@ -1,46 +1,63 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Matecat\EmojiParser\Command;
 
+use RuntimeException;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
+use stdClass;
 
-class EmojiUpdateCommand  extends Command
+/**
+ * @codeCoverageIgnore
+ */
+class EmojiUpdateCommand extends Command
 {
-    protected function configure() {
+    protected function configure(): void
+    {
         $this
-            ->setName( 'emoji:update' )
-            ->setDescription( 'Update the emoji static map.' )
-            ->setHelp( "Update the emoji static map with emoji-api.com API." );
+            ->setName('emoji:update')
+            ->setDescription('Update the emoji static map.')
+            ->setHelp("Update the emoji static map with emoji-api.com API.");
     }
 
-    /**
-     * @param InputInterface $input
-     * @param OutputInterface $output
-     * @return int
-     */
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
         // SymfonyStyle
-        $io = new SymfonyStyle( $input, $output );
+        $io = new SymfonyStyle($input, $output);
         $io->title('Update the emoji static map with emoji-api.com API');
 
-        $apiKey = parse_ini_file(__DIR__.'/../../config/credentials.ini');
-        $url = 'https://emoji-api.com/emojis?access_key='.$apiKey['emoji_api_key'];
+        $apiKey = parse_ini_file(__DIR__ . '/../../config/credentials.ini');
+        if ($apiKey === false || !isset($apiKey['emoji_api_key'])) {
+            throw new RuntimeException('Cannot read credentials.ini or missing emoji_api_key.');
+        }
 
-        $emojis = json_decode(file_get_contents($url));
+        $url = 'https://emoji-api.com/emojis?access_key=' . $apiKey['emoji_api_key'];
+
+        $response = file_get_contents($url);
+        if ($response === false) {
+            throw new RuntimeException('Failed to fetch emojis from API.');
+        }
+
+        /** @var list<stdClass>|null $emojis */
+        $emojis = json_decode($response);
+        if (!is_array($emojis)) {
+            throw new RuntimeException('Failed to decode JSON response.');
+        }
 
         $i = 1;
         $updates = 0;
         $skipped = 0;
 
-        foreach ($emojis as $emoji){
+        foreach ($emojis as $emoji) {
             $this->importEmoji($emoji, $io, $i, $updates, $skipped);
 
-            if(isset($emoji->variants) and is_array($emoji->variants)){
-                foreach ($emoji->variants as $variant){
+            if (isset($emoji->variants) && is_array($emoji->variants)) {
+                /** @var stdClass $variant */
+                foreach ($emoji->variants as $variant) {
                     $this->importEmoji($variant, $io, $i, $updates, $skipped);
                 }
             }
@@ -48,42 +65,44 @@ class EmojiUpdateCommand  extends Command
 
         $io->newLine();
         $io->writeln("========================================");
-        $io->writeln("UPDATED: <fg=cyan>".$updates."</> SKIPPED: <fg=red>".$skipped."</>");
+        $io->writeln("UPDATED: <fg=cyan>" . $updates . "</> SKIPPED: <fg=red>" . $skipped . "</>");
         $io->writeln("========================================");
         $io->newLine();
 
         return Command::SUCCESS;
     }
 
-    /**
-     * @param $emoji
-     * @param $i
-     * @param SymfonyStyle $io
-     * @param $updates
-     * @param $skipped
-     */
-    private function importEmoji($emoji, SymfonyStyle $io, &$i, &$updates, &$skipped)
+    private function importEmoji(stdClass $emoji, SymfonyStyle $io, int &$i, int &$updates, int &$skipped): void
     {
-        $htmlEntities = $this->convertEmojiToHtmlEntities($emoji->character);
+        /** @var string $character */
+        $character = $emoji->character;
+        /** @var string $slug */
+        $slug = $emoji->slug;
 
-        $chmapFile =  __DIR__ . '/../chmap.php';
+        $htmlEntities = $this->convertEmojiToHtmlEntities($character);
+
+        $chmapFile = __DIR__ . '/../chmap.php';
+
+        /** @var array<string, string> $chmap */
         $chmap = include $chmapFile;
         $inverseChmap = array_flip($chmap);
 
-        foreach ($htmlEntities as $character => $htmlEntity){
-            if(strlen($htmlEntity) >= 8){
-                if(!isset($inverseChmap[$htmlEntity])){
+        foreach ($htmlEntities as $char => $htmlEntity) {
+            if (strlen($htmlEntity) >= 8) {
+                if (!isset($inverseChmap[$htmlEntity])) {
                     $outcome = 'UPDATED';
                     $outcomeColor = 'cyan';
                     $updates++;
-                    $chmap[$character] = $htmlEntity;
+                    $chmap[$char] = $htmlEntity;
                 } else {
                     $outcome = 'SKIPPED';
                     $outcomeColor = 'red';
                     $skipped++;
                 }
 
-                $io->writeln(($i).'. Importing <fg=green>'.$emoji->slug.'</>...........<fg='.$outcomeColor.'>'.$outcome.'</>');
+                $io->writeln(
+                    $i . '. Importing <fg=green>' . $slug . '</>...........<fg=' . $outcomeColor . '>' . $outcome . '</>'
+                );
                 $i++;
 
                 file_put_contents($chmapFile, $this->generateTheChmapArray($chmap));
@@ -92,12 +111,11 @@ class EmojiUpdateCommand  extends Command
     }
 
     /**
-     * @param $chmap
-     * @return string
+     * @param array<string, string> $chmap
      */
-    private function generateTheChmapArray($chmap)
+    private function generateTheChmapArray(array $chmap): string
     {
-        $chmapArray  = "<?php ";
+        $chmapArray = "<?php ";
         $chmapArray .= PHP_EOL;
         $chmapArray .= PHP_EOL;
         $chmapArray .= "/**";
@@ -118,32 +136,37 @@ class EmojiUpdateCommand  extends Command
         $chmapArray .= PHP_EOL;
         $chmapArray .= " *";
         $chmapArray .= PHP_EOL;
-        $chmapArray .= " * @var array";
+        $chmapArray .= " * @var array<string, string>";
         $chmapArray .= PHP_EOL;
         $chmapArray .= " */";
         $chmapArray .= PHP_EOL;
-        $chmapArray .= "return ". var_export($chmap, true) .";";
+        $arrayValue = var_export($chmap, true);
+        $arrayValue = str_replace('array (', '[', $arrayValue);
+        $arrayValue = str_replace(')', ']', $arrayValue);
+        $chmapArray .= "return " . $arrayValue . ";";
         $chmapArray .= PHP_EOL;
 
         return $chmapArray;
     }
 
     /**
-     * @param $emoji
-     * @return array
+     * @return array<string, string>
      */
-    private function convertEmojiToHtmlEntities($emoji)
+    private function convertEmojiToHtmlEntities(string $emoji): array
     {
-        $letters = preg_split( '//u', $emoji, null, PREG_SPLIT_NO_EMPTY );
+        $letters = preg_split('//u', $emoji, -1, PREG_SPLIT_NO_EMPTY);
         $entities = [];
 
-        foreach ( $letters as $letter ) {
+        if ($letters === false) {
+            return $entities;
+        }
 
+        foreach ($letters as $letter) {
             $utf32 = mb_convert_encoding($letter, 'UTF-32', 'UTF-8');
             $hex4 = bin2hex($utf32);
             $dec = hexdec($hex4);
 
-            $entities[$letter] = '&#'.$dec.';';
+            $entities[$letter] = '&#' . $dec . ';';
         }
 
         return $entities;
