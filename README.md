@@ -1,5 +1,8 @@
-[![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/matecat/emoji-to-entity-converter/badges/quality-score.png?b=main)](https://scrutinizer-ci.com/g/matecat/emoji-to-entity-converter/?branch=main)
 [![Build Status](https://app.travis-ci.com/matecat/emoji-to-entity-converter.svg?token=qBazxkHwP18h3EWnHjjF&branch=main)](https://app.travis-ci.com/matecat/emoji-to-entity-converter)
+[![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=matecat_emoji-to-entity-converter&metric=alert_status)](https://sonarcloud.io/summary/new_code?id=matecat_emoji-to-entity-converter)
+[![Coverage](https://sonarcloud.io/api/project_badges/measure?project=matecat_emoji-to-entity-converter&metric=coverage)](https://sonarcloud.io/summary/new_code?id=matecat_emoji-to-entity-converter)
+[![Reliability Rating](https://sonarcloud.io/api/project_badges/measure?project=matecat_emoji-to-entity-converter&metric=reliability_rating)](https://sonarcloud.io/summary/new_code?id=matecat_emoji-to-entity-converter)
+[![Maintainability Rating](https://sonarcloud.io/api/project_badges/measure?project=matecat_emoji-to-entity-converter&metric=sqale_rating)](https://sonarcloud.io/summary/new_code?id=matecat_emoji-to-entity-converter)
 
 # Usage
 

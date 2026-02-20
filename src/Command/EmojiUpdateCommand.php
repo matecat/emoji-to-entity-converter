@@ -84,7 +84,7 @@ class EmojiUpdateCommand extends Command
         $chmapFile = __DIR__ . '/../chmap.php';
 
         /** @var array<string, string> $chmap */
-        $chmap = include $chmapFile;
+        $chmap = require_once $chmapFile;
         $inverseChmap = array_flip($chmap);
 
         foreach ($htmlEntities as $char => $htmlEntity) {
